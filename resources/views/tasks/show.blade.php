@@ -10,7 +10,6 @@
         <tr>
             <th>id</th>
             <td>{{ $tasks->id }}</td>
-            <td>{{ $tasks->status }}</td>
         </tr>
 
         <tr>
