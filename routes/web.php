@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\TasksController;
+use App\Http\Controllers\UsersController; 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,19 +15,17 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [TasksController::class, 'index']);
+Route::resource('tasks', TasksController::class);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::group(['middleware' => ['auth']],function () {
+Route::resource('users', UsersController::class, ['only' => ['index', 'show']]);
 });
+Route::get('/tasks/create', [TasksController::class, 'create'])->name('tasks.create');
+
 
 require __DIR__.'/auth.php';
