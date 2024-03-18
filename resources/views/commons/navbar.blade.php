@@ -6,10 +6,7 @@
         </div>
 
         <div class="flex-none">
-            <ul tabindex="0" class="menu lg:block lg:menu-horizontal">
-                {{-- タスク作成ページへのリンク --}}
-                <li><a class="link link-hover" href="{{ route('tasks.create') }}">新規タスクの投稿</a></li>
-            </ul>
+
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <ul tabindex="0" class="menu hidden lg:menu-horizontal">
@@ -33,4 +30,4 @@
             </form>
         </div>
     </nav>
-</header>
+</header>  

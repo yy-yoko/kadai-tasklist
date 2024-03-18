@@ -15,31 +15,21 @@ class TasksController extends Controller
      */
     public function index()
     {
-        // タスク一覧を取得
-        $tasks = Task::all();  //
-                // タスク一覧ビューでそれを表示
-        return view('tasks.index', [     // 追加
-            'tasks' => $tasks,        // 追加
-        ]);                                 // 追加
-    
-    }
-    public function dashboard()
-    {
         $data = [];
         if (\Auth::check()) { // 認証済みの場合
             // 認証済みユーザを取得
             $user = \Auth::user();
             // ユーザの投稿の一覧を作成日時の降順で取得
-            // （後のChapterで他ユーザの投稿も取得するように変更しますが、現時点ではこのユーザの投稿のみ取得します）
+            // このユーザの投稿のみ取得
             $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
             $data = [
                 'user' => $user,
                 'tasks' => $tasks,
             ];
         }
-        
+                
         // dashboardビューでそれらを表示
-        return view('dashboard', $data);
+        return view('dashboard', $data); 
     }
 
     /**
@@ -51,11 +41,12 @@ class TasksController extends Controller
     {
         //
         $task = new Task;
-        
+
         // タスク作成ビューを表示
         return view('tasks.create', [
             'tasks' => $task,
         ]);
+        
     }
 
     /**
@@ -66,20 +57,21 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
+       
         // バリデーションを行う
         $request->validate([
         'content' => 'required|max:255',
-		'status' => 'required|max:10',
         ]);
         
-        // タスクを作成
-        $tasks = new Task;
-        $tasks->content = $request->content;
-        $tasks->status = $request->status;
-        $tasks->save();
-
+        // 認証済みユーザの投稿として作成
+        $request->user()->tasks()->create([
+            'content' => $request->content,
+            'status' => $request->status,
+        ]);
+        
         // トップページへリダイレクトさせる
-        return redirect('/');
+       return redirect('/');
+        
     }
 
     /**
@@ -109,7 +101,7 @@ class TasksController extends Controller
     {
         // idの値でタスクを検索して取得
         $tasks = Task::findOrFail($id);
-
+        
         // タスク編集ビューでそれを表示
         return view('tasks.edit', [
             'tasks' => $tasks,
@@ -151,12 +143,14 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
+      
         // idの値でタスクを検索して取得
         $tasks = Task::findOrFail($id);
         // タスクを削除
         $tasks->delete();
-        
+
         // トップページへリダイレクトさせる
         return redirect('/');
     }
+    
 }

@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-
+@if (Auth::check())
 <div class="prose ml-4">
-        <h2>タスク新規作成ページ</h2>
+        <h2>タスク新規作成</h2>
     </div>
 
     <div class="flex justify-center">
@@ -16,15 +16,15 @@
                     </label>
                     <input type="text" name="content" class="input input-bordered w-full">
                 </div>
-                <div class="form-control my-4">
-                    <label for="status" class="label">
-                        <span class="label-text">ステータス:</span>
-                    </label>
-                    <input type="text" name="status" class="input input-bordered w-full">
-                </div>
 
             <button type="submit" class="btn btn-primary btn-outline">投稿</button>
         </form>
     </div>
-
+    @else
+        <div class="center jumbotron">
+            <div class="navbar-brand d-flex flex-row-reverse bd-highlight">
+                Welcome to the Microposts
+            </div>
+        </div>
+    @endif
 @endsection
