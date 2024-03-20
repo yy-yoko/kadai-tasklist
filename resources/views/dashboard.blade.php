@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-@if (Auth::check())
-<div class="prose ml-4">
+    @if (Auth::check())
+    <div class="prose ml-4">
         <h2>タスク 一覧</h2>
     </div>
 
@@ -27,6 +27,12 @@
         </table>
             {{-- タスク作成ページへのリンク --}}                                                   
     <a class="btn btn-primary" href="{{ route('tasks.create') }}">新規タスクの投稿</a> 
+    @else
+        <div class="center jumbotron">
+            <div class="navbar-brand d-flex flex-row-reverse bd-highlight">
+                Welcome to the Tasklist
+            </div>
+        </div>
     @endif
 
 @endsection

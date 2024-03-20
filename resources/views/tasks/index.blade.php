@@ -2,7 +2,7 @@
 
 @section('content')
 @if (Auth::check())
-    @if (isset($tasks))
+
     <div class="prose ml-4">
         <h2>タスク 一覧</h2>
     </div>
@@ -28,6 +28,10 @@
         </table>
             {{-- タスク作成ページへのリンク --}}                                                   
     <a class="btn btn-primary" href="{{ route('tasks.create') }}">新規タスクの投稿</a>       
+    @else
+  
     @endif
+
+
    
 @endsection

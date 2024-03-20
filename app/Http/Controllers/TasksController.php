@@ -8,11 +8,6 @@ use App\Models\Task;
 
 class TasksController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $data = [];
@@ -27,19 +22,13 @@ class TasksController extends Controller
                 'tasks' => $tasks,
             ];
         }
-                
-        // dashboardビューでそれらを表示
-        return view('dashboard', $data); 
+            // dashboardビューでそれらを表示
+            return view('dashboard', $data); 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        
         $task = new Task;
 
         // タスク作成ビューを表示
@@ -49,15 +38,8 @@ class TasksController extends Controller
         
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-       
         // バリデーションを行う
         $request->validate([
         'content' => 'required|max:255',
@@ -71,68 +53,67 @@ class TasksController extends Controller
         
         // トップページへリダイレクトさせる
        return redirect('/');
-        
+    
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         // idの値でタスクを検索して取得
         $tasks = Task::findOrFail($id);
-
-        // タスク詳細ビューでそれを表示
-        return view('tasks.show', [
-            'tasks' => $tasks,
-        ]);
+        
+        if (\Auth::check()) { // 認証済みの場合
+            // 認証済みユーザを取得
+            $user = \Auth::user();
+            // タスク詳細ビューでそれを表示
+            return view('tasks.show', [
+                'tasks' => $tasks,
+            ]);
+        } else {
+        
+            // トップページへリダイレクトさせる
+            return redirect('/');
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         // idの値でタスクを検索して取得
-        $tasks = Task::findOrFail($id);
+        $task = Task::findOrFail($id);
         
-        // タスク編集ビューでそれを表示
-        return view('tasks.edit', [
-            'tasks' => $tasks,
-        ]);
+        if (\Auth::check()) { // 認証済みの場合
+            // 認証済みユーザを取得
+            $user = \Auth::user();
+            return view('tasks.edit', [
+                'task' => $task,
+            ]);
+        } else {
+            // トップページへリダイレクトさせる
+            return redirect('/');
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         // バリデーションを行う
         $request->validate([
-        'content' => 'required|max:255',
-		'status' => 'required|max:10',
+            'content' => 'required|max:255',
+		    'status' => 'required|max:10',
         ]);
         
         // idの値でタスクを検索して取得
         $tasks = Task::findOrFail($id);
-        // タスクを更新
-        $tasks->content = $request->content;
-        $tasks->status = $request->status;
-        $tasks->save();
         
-        // トップページへリダイレクトさせる
-        return redirect('/');
-        
+        if (\Auth::check()) { // 認証済みの場合
+            // 認証済みユーザを取得
+            $user = \Auth::user();
+            // タスクを更新
+            $tasks->content = $request->content;
+            $tasks->status = $request->status;
+            $tasks->save();
+        } else {
+            // トップページへリダイレクトさせる
+            return redirect('/');
+        }
     }
 
     /**
@@ -146,11 +127,17 @@ class TasksController extends Controller
       
         // idの値でタスクを検索して取得
         $tasks = Task::findOrFail($id);
+        
+        if (\Auth::check()) { // 認証済みの場合
+        // 認証済みユーザを取得
+        $user = \Auth::user();
+        
         // タスクを削除
         $tasks->delete();
-
+        } else {
         // トップページへリダイレクトさせる
         return redirect('/');
+        }
     }
     
 }
